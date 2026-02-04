@@ -1,0 +1,1676 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ear Audio Lab</title>
+    <link rel="icon" type="image/png" href="EAL_LOGO.png">
+    <style>
+        :root {
+            --bg-primary: #f5f5f5;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #fafafa;
+            --bg-hover: #f0f0f0;
+            --bg-alert: #fff3cd;
+            --border-color: #ddd;
+            --text-primary: #333;
+            --text-secondary: #555;
+            --text-tertiary: #7f8c8d;
+            --text-alert: #856404;
+            --heading-color: #2c3e50;
+            --accent-color: #db3434;
+            --accent-hover: #b92929;
+            --input-bg: #fafafa;
+            --input-hover: #f0f0f0;
+            --range-bg: #e0e0e0;
+            --status-bg: #f8f9fa;
+            --border-alert: #ffc107;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-primary: #1a1a1a;
+                --bg-secondary: #2a2a2a;
+                --bg-tertiary: #333333;
+                --bg-hover: #3a3a3a;
+                --bg-alert: #3d3d1f;
+                --border-color: #444;
+                --text-primary: #e0e0e0;
+                --text-secondary: #b0b0b0;
+                --text-tertiary: #888;
+                --text-alert: #ffca28;
+                --heading-color: #e0e0e0;
+                --accent-color: #db3434;
+                --accent-hover: #e25d5d;
+                --input-bg: #333333;
+                --input-hover: #3a3a3a;
+                --range-bg: #444;
+                --status-bg: #333333;
+                --border-alert: #ffa000;
+            }
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            padding: 20px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: var(--bg-secondary);
+            padding: 30px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--heading-color);
+        }
+
+        .header p {
+            color: var(--text-tertiary);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .alert-box {
+            background: var(--bg-alert);
+            border: 1px solid var(--border-alert);
+            padding: 15px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: var(--text-alert);
+        }
+
+        .alert-box strong {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+        }
+
+        .panel {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            padding: 25px;
+        }
+
+        .panel-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--heading-color);
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--accent-color);
+        }
+
+        .file-upload-section {
+            margin-bottom: 20px;
+        }
+
+        .file-upload-label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .button {
+            padding: 12px 24px;
+            border: none;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-top: 10px;
+            transition: all 0.2s;
+            width: 100%;
+        }
+
+        .button-primary {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        .button-primary:hover {
+            background: var(--accent-hover);
+        }
+
+        .button-secondary {
+            background: #95a5a6;
+            color: white;
+        }
+
+        .button-secondary:hover {
+            background: #7f8c8d;
+        }
+
+        .button:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+        }
+
+        .status-message {
+            padding: 12px;
+            margin: 15px 0;
+            font-size: 13px;
+            border: 1px solid var(--border-color);
+            background: var(--status-bg);
+            color: var(--text-primary);
+            min-height: 40px;
+        }
+
+        .audio-player {
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        .control-group {
+            margin-bottom: 25px;
+        }
+
+        .control-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+
+        .control-name {
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .control-value {
+            font-weight: 600;
+            color: var(--accent-color);
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: var(--range-bg);
+            outline: none;
+            appearance: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 2px;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            border-radius: 2px;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        .file-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 10px 14px;
+            background: var(--input-bg);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 3px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s, border-color 0.2s, color 0.2s;
+        }
+
+        .file-button:hover {
+            background: var(--input-hover);
+            border-color: var(--accent-color);
+        }
+
+        .preset-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .preset-button {
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .preset-button:hover {
+            background: var(--bg-hover);
+            border-color: var(--accent-color);
+        }
+
+        .history-section {
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .history-item {
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 10px;
+            background: var(--bg-tertiary);
+            font-size: 12px;
+        }
+
+        .history-item:hover {
+            background: var(--bg-hover);
+        }
+
+        .history-time {
+            font-weight: 600;
+            color: var(--heading-color);
+            margin-bottom: 5px;
+        }
+
+        .history-filename {
+            color: var(--text-tertiary);
+            margin-bottom: 8px;
+            word-break: break-all;
+        }
+
+        .history-settings {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5px;
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .history-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .history-button {
+            padding: 6px 12px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-size: 11px;
+            cursor: pointer;
+            flex: 1;
+        }
+
+        .history-button:hover {
+            background: var(--accent-color);
+            color: white;
+            border-color: var(--accent-color);
+        }
+
+        .empty-history {
+            text-align: center;
+            padding: 40px 20px;
+            color: #95a5a6;
+            font-size: 13px;
+        }
+
+        .github-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: #2a2a2a;
+            color: white;
+            padding: 10px 14px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            font-family: sans-serif;
+            font-size: 14px;
+            transition: background 0.2s ease, transform 0.2s ease;
+        }
+
+        .github-btn:hover {
+            background: #000;
+            transform: translateY(-2px);
+        }
+
+        .github-btn svg {
+            fill: white;
+        }
+
+        .custom-preset-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            margin-bottom: 5px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 3px;
+            font-size: 12px;
+        }
+
+        .custom-preset-item:hover {
+            background: var(--bg-hover);
+        }
+
+        .custom-preset-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .custom-preset-btn {
+            padding: 4px 8px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-size: 11px;
+            cursor: pointer;
+            border-radius: 3px;
+        }
+
+        .custom-preset-btn:hover {
+            background: var(--accent-color);
+            color: white;
+            border-color: var(--accent-color);
+        }
+
+        .file-list {
+            margin-top: 10px;
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid var(--border-color);
+            border-radius: 3px;
+            background: var(--bg-tertiary);
+        }
+
+        .file-list-item {
+            padding: 8px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .file-list-item:last-child {
+            border-bottom: none;
+        }
+
+        .file-list-item:hover {
+            background: var(--bg-hover);
+        }
+
+        .file-status {
+            font-size: 11px;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: 500;
+        }
+
+        .file-status.pending {
+            background: #95a5a6;
+            color: white;
+        }
+
+        .file-status.processing {
+            background: #3498db;
+            color: white;
+        }
+
+        .file-status.complete {
+            background: #27ae60;
+            color: white;
+        }
+
+        .file-status.error {
+            background: #e74c3c;
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .preset-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Ear Audio Lab</h1>
+            <p>Have the ability to EQ all audio files to a distorted range automatically, and you edit how distorted it
+                can be with this tool.</p>
+        </div>
+
+        <div class="alert-box">
+            <strong>Safety Notice:</strong>
+            Please reduce system volume levels before playback. Processed audio files may contain significantly elevated
+            amplitude levels that could cause discomfort or equipment damage at standard listening volumes.
+        </div>
+
+        <div class="main-content">
+            <div class="left-column">
+                <div class="panel">
+                    <div class="panel-title">File Upload & Processing</div>
+
+                    <div class="file-upload-section">
+                        <label class="file-upload-label">Select Audio File(s):</label>
+                        <label for="audioFileInput" class="file-button">
+                            Choose Audio File(s)
+                        </label>
+                        <input type="file" id="audioFileInput" accept="audio/*" multiple>
+
+                        <div id="fileNameDisplay" style="font-size:12px; color:var(--text-tertiary); margin-top:6px;">
+                            No file selected
+                        </div>
+                    </div>
+
+                    <div class="status-message" id="status">Ready to process audio files. Please select a file to begin.
+                    </div>
+
+                    <div>
+                        <button class="button button-primary" id="processBtn" style="display:none;">Process
+                            Audio</button>
+                        <button class="button button-secondary" id="downloadBtn" style="display:none;">Download
+                            Processed File</button>
+                        <button class="button button-secondary" id="compareBtn" style="display:none;">Switch to
+                            Original</button>
+                    </div>
+
+                    <audio controls id="processedAudio" class="audio-player" style="display:none;"></audio>
+
+                    <!-- Waveform Display -->
+                    <div style="margin-top: 15px;">
+                        <canvas id="waveformCanvas"
+                            style="width: 100%; height: 150px; border: 1px solid var(--border-color); background: var(--bg-tertiary); border-radius: 3px;"></canvas>
+                    </div>
+
+                    <!-- Frequency Analyzer -->
+                    <div style="margin-top: 10px;">
+                        <canvas id="frequencyCanvas"
+                            style="width: 100%; height: 120px; border: 1px solid var(--border-color); background: var(--bg-tertiary); border-radius: 3px;"></canvas>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-title">Parameters</div>
+
+                    <div class="control-group">
+                        <div class="control-label">
+                            <span class="control-name">Multiplier</span>
+                            <span class="control-value" id="masterValue">100x</span>
+                        </div>
+                        <input type="range" id="masterGain" min="1" max="200" value="100" step="1">
+                    </div>
+
+                    <div class="control-group">
+                        <div class="control-label">
+                            <span class="control-name">Bass (200 Hz)</span>
+                            <span class="control-value" id="bassValue">+30 dB</span>
+                        </div>
+                        <input type="range" id="bassBoost" min="0" max="50" value="30" step="1">
+                    </div>
+
+                    <div class="control-group">
+                        <div class="control-label">
+                            <span class="control-name">Low-Mid (800 Hz)</span>
+                            <span class="control-value" id="lowMidValue">+35 dB</span>
+                        </div>
+                        <input type="range" id="lowMidBoost" min="0" max="50" value="35" step="1">
+                    </div>
+
+                    <div class="control-group">
+                        <div class="control-label">
+                            <span class="control-name">High-Mid (2000 Hz)</span>
+                            <span class="control-value" id="highMidValue">+30 dB</span>
+                        </div>
+                        <input type="range" id="highMidBoost" min="0" max="50" value="30" step="1">
+                    </div>
+
+                    <div class="control-group">
+                        <div class="control-label">
+                            <span class="control-name">Treble (3000 Hz)</span>
+                            <span class="control-value" id="trebleValue">+25 dB</span>
+                        </div>
+                        <input type="range" id="trebleBoost" min="0" max="50" value="25" step="1">
+                    </div>
+
+                    <div class="control-group">
+                        <div class="control-label">
+                            <span class="control-name">Harmonic</span>
+                            <span class="control-value" id="distortionValue">800</span>
+                        </div>
+                        <input type="range" id="distortionAmount" min="0" max="2000" value="800" step="50">
+                    </div>
+
+                    <div class="control-group">
+                        <div class="control-label">
+                            <span class="control-name">Compression Ratio</span>
+                            <span class="control-value" id="compressionValue">20:1</span>
+                        </div>
+                        <input type="range" id="compressionRatio" min="1" max="20" value="20" step="1">
+                    </div>
+
+                    <div class="control-group">
+                        <div class="control-label">
+                            <span class="control-name">Pitch Shift</span>
+                            <span class="control-value" id="pitchValue">0 semitones</span>
+                        </div>
+                        <input type="range" id="pitchShift" min="-12" max="12" value="0" step="1">
+                    </div>
+
+                    <div class="control-group">
+                        <div class="control-label">
+                            <span class="control-name">Speed</span>
+                            <span class="control-value" id="speedValue">1.00x</span>
+                        </div>
+                        <input type="range" id="speedControl" min="0.25" max="2.0" value="1.0" step="0.05">
+                    </div>
+
+                    <div class="control-group">
+                        <div class="control-label">
+                            <span class="control-name">Reverb</span>
+                            <span class="control-value" id="reverbValue">0%</span>
+                        </div>
+                        <input type="range" id="reverbAmount" min="0" max="100" value="0" step="5">
+                    </div>
+
+                    <div class="control-group">
+                        <div class="control-label">
+                            <span class="control-name">Echo Time</span>
+                            <span class="control-value" id="delayTimeValue">0.0s</span>
+                        </div>
+                        <input type="range" id="delayTime" min="0" max="2.0" value="0" step="0.1">
+                    </div>
+
+                    <div class="control-group">
+                        <div class="control-label">
+                            <span class="control-name">Echo Feedback</span>
+                            <span class="control-value" id="delayFeedbackValue">0%</span>
+                        </div>
+                        <input type="range" id="delayFeedback" min="0" max="90" value="0" step="5">
+                    </div>
+
+                    <div class="control-group">
+                        <div class="control-label">
+                            <span class="control-name">Stereo Width</span>
+                            <span class="control-value" id="stereoWidthValue">100%</span>
+                        </div>
+                        <input type="range" id="stereoWidth" min="0" max="200" value="100" step="10">
+                    </div>
+
+                    <div class="control-group">
+                        <div class="control-label">
+                            <span class="control-name">Bit Depth</span>
+                            <span class="control-value" id="bitDepthValue">16 bit</span>
+                        </div>
+                        <input type="range" id="bitDepth" min="1" max="16" value="16" step="1">
+                    </div>
+
+                    <div class="control-group">
+                        <div class="control-label">
+                            <span class="control-name">Start Time</span>
+                            <span class="control-value" id="startTimeValue">0.0s</span>
+                        </div>
+                        <input type="range" id="startTime" min="0" max="100" value="0" step="0.1" disabled>
+                    </div>
+
+                    <div class="control-group">
+                        <div class="control-label">
+                            <span class="control-name">End Time</span>
+                            <span class="control-value" id="endTimeValue">End</span>
+                        </div>
+                        <input type="range" id="endTime" min="0" max="100" value="100" step="0.1" disabled>
+                    </div>
+
+                    <div style="margin: 15px 0;">
+                        <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; cursor: pointer;">
+                            <input type="checkbox" id="autoProcess" style="width: auto; cursor: pointer;">
+                            <span>Auto-process on slider change</span>
+                        </label>
+                    </div>
+
+                    <div class="panel-title" style="margin-top: 20px;">Processing Presets</div>
+                    <div class="preset-grid">
+                        <button class="preset-button" id="presetNone">None</button>
+                        <button class="preset-button" id="presetMild">Light</button>
+                        <button class="preset-button" id="presetDefault">Standard</button>
+                        <button class="preset-button" id="presetExtreme">Aggressive</button>
+                        <button class="preset-button" id="presetNuclear">Maximum</button>
+                    </div>
+
+                    <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--border-color);">
+                        <div style="display: flex; gap: 5px; margin-bottom: 10px;">
+                            <input type="text" id="presetName" placeholder="Custom preset name..."
+                                style="flex: 1; padding: 8px; background: var(--input-bg); border: 1px solid var(--border-color); color: var(--text-primary); font-size: 12px; border-radius: 3px;">
+                            <button class="button button-secondary" id="savePresetBtn"
+                                style="width: auto; margin: 0; padding: 8px 16px;">Save</button>
+                        </div>
+                        <div id="customPresets"></div>
+                    </div>
+
+                    <button class="button button-secondary" id="resetBtn"
+                        style="width: 100%; margin-top: 10px; margin-right: 0;">Reset to Default</button>
+                </div>
+            </div>
+
+            <div class="right-column">
+                <div class="panel">
+                    <div class="panel-title">Processing History</div>
+                    <div class="history-section" id="historyContainer">
+                        <div class="empty-history">
+                            No processing history available. Process your first audio file to begin tracking your work.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <a href="https://github.com/Nightbrisk101/EAL-Repo" target="_blank" class="github-btn">
+            <svg height="20" width="20" viewBox="0 0 16 16" fill="currentColor">
+                <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 
+    7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49 
+    -2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13 
+    -.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82 
+    .72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07 
+    -1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15 
+    -.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82 
+    .64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 
+    2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 
+    1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 
+    1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 
+    8.013 0 0016 8c0-4.42-3.58-8-8-8z" />
+            </svg>
+        </a>
+    </div>
+
+    <script>
+        let processedBlob = null;
+        let currentFile = null;
+        let isProcessing = false;
+        let processingHistory = [];
+        let originalAudioBlob = null;
+        let isComparingOriginal = false;
+        let customPresets = [];
+        let fileQueue = [];
+        let currentFileIndex = 0;
+
+        // Get all sliders
+        const sliders = {
+            master: document.getElementById('masterGain'),
+            bass: document.getElementById('bassBoost'),
+            lowMid: document.getElementById('lowMidBoost'),
+            highMid: document.getElementById('highMidBoost'),
+            treble: document.getElementById('trebleBoost'),
+            distortion: document.getElementById('distortionAmount'),
+            compression: document.getElementById('compressionRatio'),
+            pitch: document.getElementById('pitchShift'),
+            speed: document.getElementById('speedControl'),
+            reverb: document.getElementById('reverbAmount'),
+            delayTime: document.getElementById('delayTime'),
+            delayFeedback: document.getElementById('delayFeedback'),
+            stereoWidth: document.getElementById('stereoWidth'),
+            bitDepth: document.getElementById('bitDepth'),
+            startTime: document.getElementById('startTime'),
+            endTime: document.getElementById('endTime')
+        };
+
+        // Get all value displays
+        const displays = {
+            master: document.getElementById('masterValue'),
+            bass: document.getElementById('bassValue'),
+            lowMid: document.getElementById('lowMidValue'),
+            highMid: document.getElementById('highMidValue'),
+            treble: document.getElementById('trebleValue'),
+            distortion: document.getElementById('distortionValue'),
+            compression: document.getElementById('compressionValue'),
+            pitch: document.getElementById('pitchValue'),
+            speed: document.getElementById('speedValue'),
+            reverb: document.getElementById('reverbValue'),
+            delayTime: document.getElementById('delayTimeValue'),
+            delayFeedback: document.getElementById('delayFeedbackValue'),
+            stereoWidth: document.getElementById('stereoWidthValue'),
+            bitDepth: document.getElementById('bitDepthValue'),
+            startTime: document.getElementById('startTimeValue'),
+            endTime: document.getElementById('endTimeValue')
+        };
+
+        // Update all displays
+        function updateAllDisplays() {
+            displays.master.textContent = sliders.master.value + 'x';
+            displays.bass.textContent = '+' + sliders.bass.value + ' dB';
+            displays.lowMid.textContent = '+' + sliders.lowMid.value + ' dB';
+            displays.highMid.textContent = '+' + sliders.highMid.value + ' dB';
+            displays.treble.textContent = '+' + sliders.treble.value + ' dB';
+            displays.distortion.textContent = sliders.distortion.value;
+            displays.compression.textContent = sliders.compression.value + ':1';
+            const pitchVal = parseInt(sliders.pitch.value);
+            displays.pitch.textContent = (pitchVal > 0 ? '+' : '') + pitchVal + ' semitones';
+            displays.speed.textContent = parseFloat(sliders.speed.value).toFixed(2) + 'x';
+            displays.reverb.textContent = sliders.reverb.value + '%';
+            displays.delayTime.textContent = parseFloat(sliders.delayTime.value).toFixed(1) + 's';
+            displays.delayFeedback.textContent = sliders.delayFeedback.value + '%';
+            displays.stereoWidth.textContent = sliders.stereoWidth.value + '%';
+            displays.bitDepth.textContent = sliders.bitDepth.value + ' bit';
+
+            if (currentFile && currentFile.duration) {
+                const startSec = (parseFloat(sliders.startTime.value) / 100) * currentFile.duration;
+                const endSec = (parseFloat(sliders.endTime.value) / 100) * currentFile.duration;
+                displays.startTime.textContent = startSec.toFixed(1) + 's';
+                displays.endTime.textContent = endSec === currentFile.duration ? 'End' : endSec.toFixed(1) + 's';
+            } else {
+                displays.startTime.textContent = '0.0s';
+                displays.endTime.textContent = 'End';
+            }
+        }
+
+        // Setup slider listeners
+        function setupSliderListeners() {
+            Object.keys(sliders).forEach(key => {
+                sliders[key].oninput = () => {
+                    updateAllDisplays();
+                    if (document.getElementById('autoProcess').checked && currentFile && !isProcessing) {
+                        processAudio();
+                    }
+                };
+            });
+        }
+
+        // Presets
+        const presets = {
+            none: {
+                master: 1, bass: 0, lowMid: 0, highMid: 0, treble: 0,
+                distortion: 0, compression: 1, pitch: 0, speed: 1.0,
+                reverb: 0, delayTime: 0, delayFeedback: 0, stereoWidth: 100, bitDepth: 16
+            },
+            mild: {
+                master: 30, bass: 10, lowMid: 15, highMid: 10, treble: 10,
+                distortion: 200, compression: 8, pitch: 0, speed: 1.0,
+                reverb: 10, delayTime: 0, delayFeedback: 0, stereoWidth: 100, bitDepth: 16
+            },
+            default: {
+                master: 100, bass: 30, lowMid: 35, highMid: 30, treble: 25,
+                distortion: 800, compression: 20, pitch: 0, speed: 1.0,
+                reverb: 20, delayTime: 0.3, delayFeedback: 30, stereoWidth: 100, bitDepth: 16
+            },
+            extreme: {
+                master: 150, bass: 40, lowMid: 45, highMid: 40, treble: 35,
+                distortion: 1200, compression: 20, pitch: 0, speed: 1.0,
+                reverb: 40, delayTime: 0.5, delayFeedback: 50, stereoWidth: 150, bitDepth: 12
+            },
+            nuclear: {
+                master: 200, bass: 50, lowMid: 50, highMid: 50, treble: 50,
+                distortion: 2000, compression: 20, pitch: 0, speed: 1.0,
+                reverb: 60, delayTime: 1.0, delayFeedback: 70, stereoWidth: 200, bitDepth: 8
+            }
+        };
+
+        function loadPreset(presetName) {
+            const p = presets[presetName];
+            Object.keys(p).forEach(key => {
+                if (sliders[key]) {
+                    sliders[key].value = p[key];
+                }
+            });
+            updateAllDisplays();
+            if (currentFile && !isProcessing) {
+                processAudio();
+            }
+        }
+
+        // Preset button listeners
+        document.getElementById('presetNone').onclick = () => loadPreset('none');
+        document.getElementById('presetMild').onclick = () => loadPreset('mild');
+        document.getElementById('presetDefault').onclick = () => loadPreset('default');
+        document.getElementById('presetExtreme').onclick = () => loadPreset('extreme');
+        document.getElementById('presetNuclear').onclick = () => loadPreset('nuclear');
+
+        // Get current settings
+        function getCurrentSettings() {
+            return {
+                master: parseInt(sliders.master.value),
+                bass: parseInt(sliders.bass.value),
+                lowMid: parseInt(sliders.lowMid.value),
+                highMid: parseInt(sliders.highMid.value),
+                treble: parseInt(sliders.treble.value),
+                distortion: parseInt(sliders.distortion.value),
+                compression: parseInt(sliders.compression.value),
+                pitch: parseInt(sliders.pitch.value),
+                speed: parseFloat(sliders.speed.value),
+                reverb: parseInt(sliders.reverb.value),
+                delayTime: parseFloat(sliders.delayTime.value),
+                delayFeedback: parseInt(sliders.delayFeedback.value),
+                stereoWidth: parseInt(sliders.stereoWidth.value),
+                bitDepth: parseInt(sliders.bitDepth.value),
+                startTime: parseFloat(sliders.startTime.value),
+                endTime: parseFloat(sliders.endTime.value)
+            };
+        }
+
+        // History functions
+        function loadHistory() {
+            const saved = localStorage.getItem('audioProcessingHistory');
+            if (saved) {
+                try {
+                    processingHistory = JSON.parse(saved);
+                    renderHistory();
+                } catch (e) {
+                    console.error('Failed to load history:', e);
+                    processingHistory = [];
+                }
+            }
+        }
+
+        function saveHistory() {
+            try {
+                localStorage.setItem('audioProcessingHistory', JSON.stringify(processingHistory));
+            } catch (e) {
+                console.error('Failed to save history:', e);
+            }
+        }
+
+        function addToHistory(filename, settings) {
+            const entry = {
+                id: Date.now(),
+                timestamp: new Date().toISOString(),
+                filename: filename,
+                settings: settings
+            };
+            processingHistory.unshift(entry);
+            if (processingHistory.length > 50) {
+                processingHistory = processingHistory.slice(0, 50);
+            }
+            saveHistory();
+            renderHistory();
+        }
+
+        function renderHistory() {
+            const container = document.getElementById('historyContainer');
+            if (processingHistory.length === 0) {
+                container.innerHTML = '<div class="empty-history">No processing history available. Process your first audio file to begin tracking your work.</div>';
+                return;
+            }
+
+            container.innerHTML = processingHistory.map(entry => {
+                const date = new Date(entry.timestamp);
+                const timeStr = date.toLocaleString();
+                const pitchDisplay = entry.settings.pitch !== undefined ? entry.settings.pitch : 0;
+                return `
+                    <div class="history-item">
+                        <div class="history-time">${timeStr}</div>
+                        <div class="history-filename">${entry.filename}</div>
+                        <div class="history-settings">
+                            <div>Master: ${entry.settings.master}x</div>
+                            <div>Bass: +${entry.settings.bass} dB</div>
+                            <div>Pitch: ${pitchDisplay > 0 ? '+' : ''}${pitchDisplay} st</div>
+                            <div>Speed: ${entry.settings.speed || 1.0}x</div>
+                        </div>
+                        <div class="history-actions">
+                            <button class="history-button" onclick="loadHistorySettings(${entry.id})">Load Settings</button>
+                            <button class="history-button" onclick="deleteHistoryEntry(${entry.id})">Delete</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        window.loadHistorySettings = function (id) {
+            const entry = processingHistory.find(e => e.id === id);
+            if (!entry) return;
+
+            Object.keys(entry.settings).forEach(key => {
+                if (sliders[key]) {
+                    sliders[key].value = entry.settings[key];
+                }
+            });
+
+            updateAllDisplays();
+
+            if (currentFile && !isProcessing) {
+                processAudio();
+            }
+
+            document.getElementById('status').textContent = 'Settings loaded from history. Ready to process.';
+        }
+
+        window.deleteHistoryEntry = function (id) {
+            processingHistory = processingHistory.filter(e => e.id !== id);
+            saveHistory();
+            renderHistory();
+        }
+
+        // Custom Presets
+        function loadCustomPresets() {
+            const saved = localStorage.getItem('customAudioPresets');
+            if (saved) {
+                try {
+                    customPresets = JSON.parse(saved);
+                    renderCustomPresets();
+                } catch (e) {
+                    console.error('Failed to load custom presets:', e);
+                    customPresets = [];
+                }
+            }
+        }
+
+        function saveCustomPresets() {
+            try {
+                localStorage.setItem('customAudioPresets', JSON.stringify(customPresets));
+            } catch (e) {
+                console.error('Failed to save custom presets:', e);
+            }
+        }
+
+        function renderCustomPresets() {
+            const container = document.getElementById('customPresets');
+            if (customPresets.length === 0) {
+                container.innerHTML = '';
+                return;
+            }
+
+            container.innerHTML = customPresets.map((preset, index) => `
+                <div class="custom-preset-item">
+                    <span>${preset.name}</span>
+                    <div class="custom-preset-actions">
+                        <button class="custom-preset-btn" onclick="loadCustomPreset(${index})">Load</button>
+                        <button class="custom-preset-btn" onclick="deleteCustomPreset(${index})">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        window.loadCustomPreset = function (index) {
+            const preset = customPresets[index];
+            if (!preset) return;
+
+            Object.keys(preset.settings).forEach(key => {
+                if (sliders[key]) {
+                    sliders[key].value = preset.settings[key];
+                }
+            });
+
+            updateAllDisplays();
+
+            if (currentFile && !isProcessing) {
+                processAudio();
+            }
+
+            document.getElementById('status').textContent = `Loaded custom preset: ${preset.name}`;
+        };
+
+        window.deleteCustomPreset = function (index) {
+            customPresets.splice(index, 1);
+            saveCustomPresets();
+            renderCustomPresets();
+        };
+
+        document.getElementById('savePresetBtn').addEventListener('click', () => {
+            const nameInput = document.getElementById('presetName');
+            const name = nameInput.value.trim();
+
+            if (!name) {
+                alert('Please enter a preset name');
+                return;
+            }
+
+            const settings = getCurrentSettings();
+            customPresets.push({ name, settings });
+            saveCustomPresets();
+            renderCustomPresets();
+
+            nameInput.value = '';
+            document.getElementById('status').textContent = `Saved custom preset: ${name}`;
+        });
+
+        // Visualization functions
+        function drawWaveform(audioBuffer) {
+            const canvas = document.getElementById('waveformCanvas');
+            if (!canvas) return;
+
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width = canvas.offsetWidth;
+            const height = canvas.height = canvas.offsetHeight;
+
+            ctx.clearRect(0, 0, width, height);
+
+            const data = audioBuffer.getChannelData(0);
+            const step = Math.ceil(data.length / width);
+            const amp = height / 2;
+
+            ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--accent-color').trim();
+
+            for (let i = 0; i < width; i++) {
+                let min = 1.0;
+                let max = -1.0;
+
+                for (let j = 0; j < step; j++) {
+                    const datum = data[(i * step) + j];
+                    if (datum < min) min = datum;
+                    if (datum > max) max = datum;
+                }
+
+                ctx.fillRect(i, (1 + min) * amp, 1, Math.max(1, (max - min) * amp));
+            }
+        }
+
+        function drawFrequencyAnalysis(audioBuffer) {
+            const canvas = document.getElementById('frequencyCanvas');
+            if (!canvas) return;
+
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width = canvas.offsetWidth;
+            const height = canvas.height = canvas.offsetHeight;
+
+            ctx.clearRect(0, 0, width, height);
+
+            const data = audioBuffer.getChannelData(0);
+            const bufferLength = 64;
+            const barWidth = width / bufferLength;
+
+            const frequencies = new Array(bufferLength).fill(0);
+            const step = Math.floor(data.length / bufferLength);
+
+            for (let i = 0; i < bufferLength; i++) {
+                let sum = 0;
+                for (let j = 0; j < step; j++) {
+                    sum += Math.abs(data[i * step + j]);
+                }
+                frequencies[i] = sum / step;
+            }
+
+            const maxFreq = Math.max(...frequencies);
+            const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-color').trim();
+
+            ctx.fillStyle = accentColor;
+            for (let i = 0; i < bufferLength; i++) {
+                const barHeight = (frequencies[i] / maxFreq) * height * 0.9;
+                ctx.fillRect(i * barWidth, height - barHeight, barWidth - 1, barHeight);
+            }
+        }
+
+        // A/B Comparison
+        document.getElementById('compareBtn').addEventListener('click', () => {
+            const audioEl = document.getElementById('processedAudio');
+            const compareBtn = document.getElementById('compareBtn');
+
+            if (!originalAudioBlob || !processedBlob) return;
+
+            isComparingOriginal = !isComparingOriginal;
+
+            if (audioEl.src) {
+                URL.revokeObjectURL(audioEl.src);
+            }
+
+            const blob = isComparingOriginal ? originalAudioBlob : processedBlob;
+            const audioUrl = URL.createObjectURL(blob);
+            audioEl.src = audioUrl;
+
+            compareBtn.textContent = isComparingOriginal ? 'Switch to Processed' : 'Switch to Original';
+            document.getElementById('status').textContent = isComparingOriginal ?
+                'Playing original audio' : 'Playing processed audio';
+        });
+
+        // Batch processing
+        function displayFileList(files) {
+            const container = document.getElementById('fileNameDisplay');
+            if (files.length === 1) {
+                container.textContent = files[0].name;
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="file-list">
+                    ${Array.from(files).map((file, index) => `
+                        <div class="file-list-item" id="fileItem${index}">
+                            <span>${file.name}</span>
+                            <span class="file-status pending" id="fileStatus${index}">Pending</span>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        async function processBatchFiles() {
+            if (fileQueue.length === 0) return;
+
+            for (let i = 0; i < fileQueue.length; i++) {
+                currentFile = fileQueue[i];
+                currentFileIndex = i;
+
+                const statusEl = document.getElementById(`fileStatus${i}`);
+                if (statusEl) {
+                    statusEl.textContent = 'Processing';
+                    statusEl.className = 'file-status processing';
+                }
+
+                await processAudio();
+
+                if (statusEl) {
+                    statusEl.textContent = 'Complete';
+                    statusEl.className = 'file-status complete';
+                }
+
+                if (processedBlob) {
+                    const url = URL.createObjectURL(processedBlob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    const originalName = currentFile.name.replace(/\.[^/.]+$/, '');
+                    a.download = `EarAudioLab - ${originalName}.wav`;
+                    a.click();
+                    URL.revokeObjectURL(url);
+                }
+
+                await new Promise(resolve => setTimeout(resolve, 500));
+            }
+
+            document.getElementById('status').textContent = `Batch processing complete! Processed ${fileQueue.length} files.`;
+        }
+
+        // Helper functions
+        function makeBitCrushCurve(bits) {
+            const samples = 44100;
+            const curve = new Float32Array(samples);
+            const step = Math.pow(2, bits);
+
+            for (let i = 0; i < samples; i++) {
+                const x = (i * 2 / samples) - 1;
+                curve[i] = Math.round(x * step) / step;
+            }
+            return curve;
+        }
+
+        function createReverbImpulse(context, decay) {
+            const length = context.sampleRate * 2;
+            const impulse = context.createBuffer(2, length, context.sampleRate);
+
+            for (let channel = 0; channel < 2; channel++) {
+                const channelData = impulse.getChannelData(channel);
+                for (let i = 0; i < length; i++) {
+                    channelData[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / length, decay * 3);
+                }
+            }
+            return impulse;
+        }
+
+        function makeDistortionCurve(amount) {
+            const samples = 44100;
+            const curve = new Float32Array(samples);
+            const deg = Math.PI / 180;
+
+            for (let i = 0; i < samples; i++) {
+                const x = (i * 2) / samples - 1;
+                curve[i] = ((3 + amount) * x * 20 * deg) / (Math.PI + amount * Math.abs(x));
+            }
+            return curve;
+        }
+
+        function normalizeBuffer(buffer) {
+            let max = 0;
+            for (let channel = 0; channel < buffer.numberOfChannels; channel++) {
+                const data = buffer.getChannelData(channel);
+                for (let i = 0; i < data.length; i++) {
+                    const abs = Math.abs(data[i]);
+                    if (abs > max) max = abs;
+                }
+            }
+
+            if (max > 0) {
+                const scale = 0.99 / max;
+                for (let channel = 0; channel < buffer.numberOfChannels; channel++) {
+                    const data = buffer.getChannelData(channel);
+                    for (let i = 0; i < data.length; i++) {
+                        data[i] *= scale;
+                    }
+                }
+            }
+        }
+
+        function bufferToWave(abuffer) {
+            const numOfChan = abuffer.numberOfChannels;
+            const length = abuffer.length * numOfChan * 2 + 44;
+            const buffer = new ArrayBuffer(length);
+            const view = new DataView(buffer);
+            const channels = [];
+            let offset = 0;
+            let pos = 0;
+
+            setUint32(0x46464952);
+            setUint32(length - 8);
+            setUint32(0x45564157);
+            setUint32(0x20746d66);
+            setUint32(16);
+            setUint16(1);
+            setUint16(numOfChan);
+            setUint32(abuffer.sampleRate);
+            setUint32(abuffer.sampleRate * 2 * numOfChan);
+            setUint16(numOfChan * 2);
+            setUint16(16);
+            setUint32(0x61746164);
+            setUint32(length - pos - 4);
+
+            for (let i = 0; i < abuffer.numberOfChannels; i++)
+                channels.push(abuffer.getChannelData(i));
+
+            while (pos < length) {
+                for (let i = 0; i < numOfChan; i++) {
+                    let sample = Math.max(-1, Math.min(1, channels[i][offset]));
+                    sample = (sample < 0 ? sample * 0x8000 : sample * 0x7FFF) | 0;
+                    view.setInt16(pos, sample, true);
+                    pos += 2;
+                }
+                offset++;
+            }
+
+            return new Blob([buffer], { type: 'audio/wav' });
+
+            function setUint16(data) {
+                view.setUint16(pos, data, true);
+                pos += 2;
+            }
+
+            function setUint32(data) {
+                view.setUint32(pos, data, true);
+                pos += 4;
+            }
+        }
+
+        // File validation
+        const MAX_FILE_SIZE = 100 * 1024 * 1024;
+        const ALLOWED_AUDIO_TYPES = [
+            'audio/mpeg', 'audio/mp3', 'audio/wav', 'audio/wave', 'audio/x-wav',
+            'audio/ogg', 'audio/flac', 'audio/aac', 'audio/m4a', 'audio/x-m4a', 'audio/webm'
+        ];
+        const ALLOWED_EXTENSIONS = ['.mp3', '.wav', '.ogg', '.flac', '.aac', '.m4a', '.webm'];
+
+        function validateFile(file) {
+            if (!file) {
+                return { valid: false, error: 'No file selected.' };
+            }
+
+            if (file.size > MAX_FILE_SIZE) {
+                return { valid: false, error: `File size exceeds 100MB limit. Your file is ${(file.size / 1024 / 1024).toFixed(2)}MB.` };
+            }
+
+            if (file.size === 0) {
+                return { valid: false, error: 'File is empty.' };
+            }
+
+            const fileName = file.name.toLowerCase();
+            const hasValidExtension = ALLOWED_EXTENSIONS.some(ext => fileName.endsWith(ext));
+
+            if (!hasValidExtension) {
+                return { valid: false, error: `Invalid file type. Allowed types: ${ALLOWED_EXTENSIONS.join(', ')}` };
+            }
+
+            if (file.type && !ALLOWED_AUDIO_TYPES.includes(file.type.toLowerCase())) {
+                return { valid: false, error: `Invalid audio format. File MIME type: ${file.type}` };
+            }
+
+            return { valid: true };
+        }
+
+        // Main processing function
+        async function processAudio() {
+            if (!currentFile || isProcessing) return;
+
+            isProcessing = true;
+            const statusEl = document.getElementById('status');
+            statusEl.textContent = 'Processing audio file with configured parameters. Please wait...';
+
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const arrayBuffer = await currentFile.arrayBuffer();
+                let audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+
+                if (!originalAudioBlob) {
+                    originalAudioBlob = new Blob([arrayBuffer], { type: currentFile.type });
+                }
+
+                const settings = getCurrentSettings();
+
+                currentFile.duration = audioBuffer.duration;
+                sliders.startTime.disabled = false;
+                sliders.endTime.disabled = false;
+                sliders.startTime.max = audioBuffer.duration;
+                sliders.endTime.max = audioBuffer.duration;
+
+                // Apply trimming
+                const startSample = Math.floor((settings.startTime / 100) * audioBuffer.length);
+                const endSample = Math.floor((settings.endTime / 100) * audioBuffer.length);
+
+                if (startSample > 0 || endSample < audioBuffer.length) {
+                    const trimmedLength = endSample - startSample;
+                    const trimmedBuffer = audioContext.createBuffer(
+                        audioBuffer.numberOfChannels,
+                        trimmedLength,
+                        audioBuffer.sampleRate
+                    );
+
+                    for (let channel = 0; channel < audioBuffer.numberOfChannels; channel++) {
+                        const originalData = audioBuffer.getChannelData(channel);
+                        const trimmedData = trimmedBuffer.getChannelData(channel);
+                        for (let i = 0; i < trimmedLength; i++) {
+                            trimmedData[i] = originalData[startSample + i];
+                        }
+                    }
+                    audioBuffer = trimmedBuffer;
+                }
+
+                const pitchShiftRate = Math.pow(2, settings.pitch / 12);
+                const speedRate = settings.speed;
+
+                const offlineContext = new OfflineAudioContext(
+                    audioBuffer.numberOfChannels,
+                    Math.floor(audioBuffer.length / (pitchShiftRate * speedRate)),
+                    audioBuffer.sampleRate
+                );
+
+                const source = offlineContext.createBufferSource();
+                source.buffer = audioBuffer;
+                source.playbackRate.value = pitchShiftRate * speedRate;
+
+                let lastNode = source;
+
+                // Pre-gain
+                const preGain = offlineContext.createGain();
+                preGain.gain.value = 50;
+                lastNode.connect(preGain);
+                lastNode = preGain;
+
+                // EQ Filters
+                const bassFilter = offlineContext.createBiquadFilter();
+                bassFilter.type = 'lowshelf';
+                bassFilter.frequency.value = 200;
+                bassFilter.gain.value = settings.bass;
+                lastNode.connect(bassFilter);
+                lastNode = bassFilter;
+
+                const trebleFilter = offlineContext.createBiquadFilter();
+                trebleFilter.type = 'highshelf';
+                trebleFilter.frequency.value = 3000;
+                trebleFilter.gain.value = settings.treble;
+                lastNode.connect(trebleFilter);
+                lastNode = trebleFilter;
+
+                const lowMidFilter = offlineContext.createBiquadFilter();
+                lowMidFilter.type = 'peaking';
+                lowMidFilter.frequency.value = 800;
+                lowMidFilter.gain.value = settings.lowMid;
+                lowMidFilter.Q.value = 0.5;
+                lastNode.connect(lowMidFilter);
+                lastNode = lowMidFilter;
+
+                const highMidFilter = offlineContext.createBiquadFilter();
+                highMidFilter.type = 'peaking';
+                highMidFilter.frequency.value = 2000;
+                highMidFilter.gain.value = settings.highMid;
+                highMidFilter.Q.value = 0.7;
+                lastNode.connect(highMidFilter);
+                lastNode = highMidFilter;
+
+                // Distortion
+                if (settings.distortion > 0) {
+                    const distortion = offlineContext.createWaveShaper();
+                    distortion.curve = makeDistortionCurve(settings.distortion);
+                    distortion.oversample = '4x';
+                    lastNode.connect(distortion);
+                    lastNode = distortion;
+                }
+
+                // Bit Crusher
+                if (settings.bitDepth < 16) {
+                    const bitCrusher = offlineContext.createWaveShaper();
+                    bitCrusher.curve = makeBitCrushCurve(settings.bitDepth);
+                    lastNode.connect(bitCrusher);
+                    lastNode = bitCrusher;
+                }
+
+                // Main Gain
+                const mainGain = offlineContext.createGain();
+                mainGain.gain.value = settings.master;
+                lastNode.connect(mainGain);
+                lastNode = mainGain;
+
+                // Delay/Echo
+                if (settings.delayTime > 0 && settings.delayFeedback > 0) {
+                    const delay = offlineContext.createDelay(5.0);
+                    delay.delayTime.value = settings.delayTime;
+
+                    const delayFeedback = offlineContext.createGain();
+                    delayFeedback.gain.value = settings.delayFeedback / 100;
+
+                    const delayMix = offlineContext.createGain();
+                    delayMix.gain.value = 0.5;
+
+                    lastNode.connect(delay);
+                    delay.connect(delayFeedback);
+                    delayFeedback.connect(delay);
+                    delay.connect(delayMix);
+
+                    const dryGain = offlineContext.createGain();
+                    dryGain.gain.value = 0.5;
+                    lastNode.connect(dryGain);
+
+                    const delayMerge = offlineContext.createGain();
+                    dryGain.connect(delayMerge);
+                    delayMix.connect(delayMerge);
+                    lastNode = delayMerge;
+                }
+
+                // Reverb
+                if (settings.reverb > 0) {
+                    const convolver = offlineContext.createConvolver();
+                    convolver.buffer = createReverbImpulse(offlineContext, settings.reverb / 100);
+
+                    const reverbMix = offlineContext.createGain();
+                    reverbMix.gain.value = settings.reverb / 100;
+
+                    const dryGain = offlineContext.createGain();
+                    dryGain.gain.value = 1 - (settings.reverb / 200);
+
+                    lastNode.connect(convolver);
+                    convolver.connect(reverbMix);
+                    lastNode.connect(dryGain);
+
+                    const reverbMerge = offlineContext.createGain();
+                    dryGain.connect(reverbMerge);
+                    reverbMix.connect(reverbMerge);
+                    lastNode = reverbMerge;
+                }
+
+                // Stereo Width
+                if (audioBuffer.numberOfChannels === 2 && settings.stereoWidth !== 100) {
+                    const splitter = offlineContext.createChannelSplitter(2);
+                    const merger = offlineContext.createChannelMerger(2);
+
+                    const widthGain = offlineContext.createGain();
+                    widthGain.gain.value = settings.stereoWidth / 100;
+
+                    lastNode.connect(splitter);
+                    splitter.connect(widthGain, 0);
+                    splitter.connect(widthGain, 1);
+                    widthGain.connect(merger, 0, 0);
+                    widthGain.connect(merger, 0, 1);
+                    lastNode = merger;
+                }
+
+                // Compressor
+                const compressor = offlineContext.createDynamicsCompressor();
+                compressor.threshold.value = -50;
+                compressor.knee.value = 40;
+                compressor.ratio.value = settings.compression;
+                compressor.attack.value = 0;
+                compressor.release.value = 0.25;
+                lastNode.connect(compressor);
+                lastNode = compressor;
+
+                // Post Gain
+                const postGain = offlineContext.createGain();
+                postGain.gain.value = 3;
+                lastNode.connect(postGain);
+                postGain.connect(offlineContext.destination);
+
+                source.start(0);
+
+                statusEl.textContent = 'Rendering processed audio output...';
+                const renderedBuffer = await offlineContext.startRendering();
+
+                normalizeBuffer(renderedBuffer);
+                drawWaveform(renderedBuffer);
+                drawFrequencyAnalysis(renderedBuffer);
+
+                statusEl.textContent = 'Finalizing output file...';
+                const wavBlob = bufferToWave(renderedBuffer);
+                processedBlob = wavBlob;
+
+                const audioEl = document.getElementById('processedAudio');
+                if (audioEl.src) {
+                    URL.revokeObjectURL(audioEl.src);
+                }
+                const audioUrl = URL.createObjectURL(wavBlob);
+                audioEl.src = audioUrl;
+                audioEl.style.display = 'block';
+                audioEl.volume = 1.0;
+
+                document.getElementById('processBtn').style.display = 'inline-block';
+                document.getElementById('downloadBtn').style.display = 'inline-block';
+                document.getElementById('compareBtn').style.display = 'inline-block';
+                isComparingOriginal = false;
+                document.getElementById('compareBtn').textContent = 'Switch to Original';
+
+                addToHistory(currentFile.name, settings);
+
+                statusEl.textContent = 'Processing complete. Audio file ready for playback and download.';
+                isProcessing = false;
+            } catch (error) {
+                statusEl.textContent = 'Error during processing: ' + error.message;
+                console.error('Processing error:', error);
+                isProcessing = false;
+            }
+        }
+
+        // File input handler
+        document.getElementById('audioFileInput').addEventListener('change', (event) => {
+            const files = event.target.files;
+            const statusEl = document.getElementById('status');
+
+            if (!files || files.length === 0) return;
+
+            const invalidFiles = [];
+            for (let file of files) {
+                const validation = validateFile(file);
+                if (!validation.valid) {
+                    invalidFiles.push(`${file.name}: ${validation.error}`);
+                }
+            }
+
+            if (invalidFiles.length > 0) {
+                statusEl.textContent = '❌ Validation Errors:\n' + invalidFiles.join('\n');
+                statusEl.style.borderColor = '#e74c3c';
+                statusEl.style.backgroundColor = '#fadbd8';
+                event.target.value = '';
+                return;
+            }
+
+            statusEl.style.borderColor = '';
+            statusEl.style.backgroundColor = '';
+
+            if (files.length === 1) {
+                currentFile = files[0];
+                fileQueue = [];
+
+                const fileNameEl = document.getElementById('fileNameDisplay');
+                if (fileNameEl) {
+                    fileNameEl.textContent = currentFile.name;
+                }
+
+                statusEl.textContent = `File uploaded successfully (${(currentFile.size / 1024 / 1024).toFixed(2)}MB). Initiating processing sequence...`;
+                processAudio();
+            } else {
+                fileQueue = Array.from(files);
+                displayFileList(files);
+                statusEl.textContent = `${files.length} files ready for batch processing.`;
+
+                if (confirm(`Process ${files.length} files in batch mode? Each file will be processed and auto-downloaded.`)) {
+                    processBatchFiles();
+                }
+            }
+        });
+
+        // Button handlers
+        document.getElementById('processBtn').addEventListener('click', () => {
+            processAudio();
+        });
+
+        document.getElementById('downloadBtn').addEventListener('click', () => {
+            if (processedBlob && currentFile) {
+                const url = URL.createObjectURL(processedBlob);
+                const a = document.createElement('a');
+                a.href = url;
+                const originalName = currentFile.name.replace(/\.[^/.]+$/, '');
+                a.download = `EarAudioLab - ${originalName}.wav`;
+                a.click();
+                URL.revokeObjectURL(url);
+            }
+        });
+
+        document.getElementById('resetBtn').addEventListener('click', () => {
+            loadPreset('default');
+            document.getElementById('status').textContent = 'Settings reset to default values.';
+        });
+
+        // Initialize
+        loadHistory();
+        loadCustomPresets();
+        setupSliderListeners();
+        updateAllDisplays();
+    </script>
+</body>
+
+</html>
