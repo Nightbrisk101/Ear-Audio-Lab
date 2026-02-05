@@ -519,23 +519,28 @@
                             Audio</button>
                         <button class="button button-secondary" id="downloadBtn" style="display:none;">Download
                             Processed File</button>
-                        <button class="button button-secondary" id="compareBtn" style="display:none;">Switch to
-                            Original</button>
+                        <button class="button button-secondary" id="compareBtn" style="display:none;">Switch to Original</button>
                     </div>
 
                     <audio controls id="processedAudio" class="audio-player" style="display:none;"></audio>
 
                     <!-- Waveform Display -->
                     <div style="margin-top: 15px;">
-                        <canvas id="waveformCanvas"
-                            style="width: 100%; height: 150px; border: 1px solid var(--border-color); background: var(--bg-tertiary); border-radius: 3px;"></canvas>
+                        <canvas id="waveformCanvas" style="width: 100%; height: 150px; border: 1px solid var(--border-color); background: var(--bg-tertiary); border-radius: 3px;"></canvas>
                     </div>
 
                     <!-- Frequency Analyzer -->
                     <div style="margin-top: 10px;">
-                        <canvas id="frequencyCanvas"
-                            style="width: 100%; height: 120px; border: 1px solid var(--border-color); background: var(--bg-tertiary); border-radius: 3px;"></canvas>
+                        <canvas id="frequencyCanvas" style="width: 100%; height: 120px; border: 1px solid var(--border-color); background: var(--bg-tertiary); border-radius: 3px;"></canvas>
                     </div>
+                    <!-- Real-time Waveform Visualizer -->
+<div style="margin-top: 15px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+        <span style="font-size: 12px; font-weight: 500; color: var(--text-secondary);">Live Waveform (Inactive Due To Bugs, Wont Work)</span>
+        <button id="toggleLiveWave" class="button button-secondary" style="padding: 4px 10px; margin: 0; width: auto; font-size: 11px;">Start Live View</button>
+    </div>
+    <canvas id="liveWaveformCanvas" style="width: 100%; height: 100px; border: 1px solid var(--border-color); background: var(--bg-tertiary); border-radius: 3px;"></canvas>
+</div>
                 </div>
 
                 <div class="panel">
@@ -666,8 +671,86 @@
                             <span class="control-name">End Time</span>
                             <span class="control-value" id="endTimeValue">End</span>
                         </div>
-                        <input type="range" id="endTime" min="0" max="10000" value="100" step="0.1" disabled>
+                        <input type="range" id="endTime" min="0" max="100" value="100" step="0.1" disabled>
                     </div>
+                    <!-- Output Limiter -->
+<div class="control-group">
+    <div class="control-label">
+        <span class="control-name">Output Limiter</span>
+        <span class="control-value" id="limiterValue">-0.1 dB</span>
+    </div>
+    <input type="range" id="limiterThreshold" min="-3.0" max="0.0" value="-0.1" step="0.1">
+</div>
+
+<div style="margin: 15px 0;">
+    <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; cursor: pointer;">
+        <input type="checkbox" id="autoNormalize" checked style="width: auto; cursor: pointer;">
+        <span>Auto-normalize output</span>
+    </label>
+</div>
+<!-- Channel Mode -->
+<div class="control-group">
+    <label class="control-name" style="display: block; margin-bottom: 8px;">Channel Mode:</label>
+    <select id="channelMode" style="width: 100%; padding: 10px; background: var(--input-bg); color: var(--text-primary); border: 1px solid var(--border-color); font-size: 13px; border-radius: 3px; cursor: pointer;">
+        <option value="stereo">Stereo (Original)</option>
+        <option value="mono">Mono (Mix to Center)</option>
+        <option value="left">Left Channel Only</option>
+        <option value="right">Right Channel Only</option>
+        <option value="swap">Swap Left/Right</option>
+    </select>
+</div>
+<!-- Noise Gate -->
+<div class="panel-title" style="margin-top: 25px;">Dynamics</div>
+
+<div class="control-group">
+    <div class="control-label">
+        <span class="control-name">Noise Gate</span>
+        <span class="control-value" id="noiseGateValue">-80 dB (Off)</span>
+    </div>
+    <input type="range" id="noiseGate" min="-80" max="-20" value="-80" step="1">
+</div>
+<!-- Advanced EQ Section -->
+<div class="panel-title" style="margin-top: 25px;">Other EQ Options</div>
+
+<div class="control-group">
+    <div class="control-label">
+        <span class="control-name">Sub-Bass (60 Hz)</span>
+        <span class="control-value" id="subBassValue">+0 dB</span>
+    </div>
+    <input type="range" id="subBassBoost" min="0" max="50" value="0" step="1">
+</div>
+
+<div class="control-group">
+    <div class="control-label">
+        <span class="control-name">Presence (5000 Hz)</span>
+        <span class="control-value" id="presenceValue">+0 dB</span>
+    </div>
+    <input type="range" id="presenceBoost" min="0" max="50" value="0" step="1">
+</div>
+
+<div class="control-group">
+    <div class="control-label">
+        <span class="control-name">Air (12000 Hz)</span>
+        <span class="control-value" id="airValue">+0 dB</span>
+    </div>
+    <input type="range" id="airBoost" min="0" max="50" value="0" step="1">
+</div>
+<!-- Fade In/Out -->
+<div class="control-group">
+    <div class="control-label">
+        <span class="control-name">Fade In</span>
+        <span class="control-value" id="fadeInValue">0.0s</span>
+    </div>
+    <input type="range" id="fadeIn" min="0" max="10.0" value="0" step="0.1">
+</div>
+
+<div class="control-group">
+    <div class="control-label">
+        <span class="control-name">Fade Out</span>
+        <span class="control-value" id="fadeOutValue">0.0s</span>
+    </div>
+    <input type="range" id="fadeOut" min="0" max="10.0" value="0" step="0.1">
+</div>
 
                     <div style="margin: 15px 0;">
                         <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; cursor: pointer;">
@@ -687,16 +770,13 @@
 
                     <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--border-color);">
                         <div style="display: flex; gap: 5px; margin-bottom: 10px;">
-                            <input type="text" id="presetName" placeholder="Custom preset name..."
-                                style="flex: 1; padding: 8px; background: var(--input-bg); border: 1px solid var(--border-color); color: var(--text-primary); font-size: 12px; border-radius: 3px;">
-                            <button class="button button-secondary" id="savePresetBtn"
-                                style="width: auto; margin: 0; padding: 8px 16px;">Save</button>
+                            <input type="text" id="presetName" placeholder="Custom preset name..." style="flex: 1; padding: 8px; background: var(--input-bg); border: 1px solid var(--border-color); color: var(--text-primary); font-size: 12px; border-radius: 3px;">
+                            <button class="button button-secondary" id="savePresetBtn" style="width: auto; margin: 0; padding: 8px 16px;">Save</button>
                         </div>
                         <div id="customPresets"></div>
                     </div>
 
-                    <button class="button button-secondary" id="resetBtn"
-                        style="width: 100%; margin-top: 10px; margin-right: 0;">Reset to Default</button>
+                    <button class="button button-secondary" id="resetBtn" style="width: 100%; margin-top: 10px; margin-right: 0;">Reset to Default</button>
                 </div>
             </div>
 
@@ -728,6 +808,13 @@
     8.013 0 0016 8c0-4.42-3.58-8-8-8z" />
             </svg>
         </a>
+        <!-- Theme Toggle Button -->
+<div style="position: fixed; top: 20px; right: 20px; z-index: 1000;">
+    <button id="themeToggle" style="padding: 10px 16px; border: 1px solid var(--border-color); background: var(--bg-secondary); color: var(--text-primary); border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 500; display: flex; align-items: center; gap: 8px; transition: all 0.2s;">
+        <span id="themeIcon">🌓</span>
+        <span id="themeText">Theme</span>
+    </button>
+</div>
     </div>
 
     <script>
@@ -741,7 +828,198 @@
         let fileQueue = [];
         let currentFileIndex = 0;
 
-        // Get all sliders
+        // Live waveform variables
+        let liveWaveformActive = false;
+let liveAudioContext = null;
+let liveAnalyser = null;
+let liveSource = null;
+let liveAnimationId = null;
+let sourceCreated = false;
+
+        // Theme management
+        let currentTheme = localStorage.getItem('theme') || 'auto';
+
+        function setTheme(theme) {
+            const root = document.documentElement;
+            const themeIcon = document.getElementById('themeIcon');
+            const themeText = document.getElementById('themeText');
+            
+            if (theme === 'light') {
+                root.style.setProperty('--bg-primary', '#f5f5f5');
+                root.style.setProperty('--bg-secondary', '#ffffff');
+                root.style.setProperty('--bg-tertiary', '#fafafa');
+                root.style.setProperty('--bg-hover', '#f0f0f0');
+                root.style.setProperty('--bg-alert', '#fff3cd');
+                root.style.setProperty('--border-color', '#ddd');
+                root.style.setProperty('--text-primary', '#333');
+                root.style.setProperty('--text-secondary', '#555');
+                root.style.setProperty('--text-tertiary', '#7f8c8d');
+                root.style.setProperty('--text-alert', '#856404');
+                root.style.setProperty('--heading-color', '#2c3e50');
+                root.style.setProperty('--accent-color', '#db3434');
+                root.style.setProperty('--accent-hover', '#b92929');
+                root.style.setProperty('--input-bg', '#fafafa');
+                root.style.setProperty('--input-hover', '#f0f0f0');
+                root.style.setProperty('--range-bg', '#e0e0e0');
+                root.style.setProperty('--status-bg', '#f8f9fa');
+                root.style.setProperty('--border-alert', '#ffc107');
+                themeIcon.textContent = '☀️';
+                themeText.textContent = 'Light';
+            } else if (theme === 'dark') {
+                root.style.setProperty('--bg-primary', '#1a1a1a');
+                root.style.setProperty('--bg-secondary', '#2a2a2a');
+                root.style.setProperty('--bg-tertiary', '#333333');
+                root.style.setProperty('--bg-hover', '#3a3a3a');
+                root.style.setProperty('--bg-alert', '#3d3d1f');
+                root.style.setProperty('--border-color', '#444');
+                root.style.setProperty('--text-primary', '#e0e0e0');
+                root.style.setProperty('--text-secondary', '#b0b0b0');
+                root.style.setProperty('--text-tertiary', '#888');
+                root.style.setProperty('--text-alert', '#ffca28');
+                root.style.setProperty('--heading-color', '#e0e0e0');
+                root.style.setProperty('--accent-color', '#db3434');
+                root.style.setProperty('--accent-hover', '#e25d5d');
+                root.style.setProperty('--input-bg', '#333333');
+                root.style.setProperty('--input-hover', '#3a3a3a');
+                root.style.setProperty('--range-bg', '#444');
+                root.style.setProperty('--status-bg', '#333333');
+                root.style.setProperty('--border-alert', '#ffa000');
+                themeIcon.textContent = '🌙';
+                themeText.textContent = 'Dark';
+            } else {
+                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                setTheme(prefersDark ? 'dark' : 'light');
+                themeIcon.textContent = '🌓';
+                themeText.textContent = 'Auto';
+                return;
+            }
+        }
+
+        document.getElementById('themeToggle').addEventListener('click', function() {
+            const themes = ['auto', 'light', 'dark'];
+            const currentIndex = themes.indexOf(currentTheme);
+            const nextIndex = (currentIndex + 1) % themes.length;
+            currentTheme = themes[nextIndex];
+            
+            localStorage.setItem('theme', currentTheme);
+            setTheme(currentTheme);
+        });
+
+        setTheme(currentTheme);
+
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
+            if (currentTheme === 'auto') {
+                setTheme('auto');
+            }
+        });
+
+        // Live waveform toggle
+        document.getElementById('toggleLiveWave').addEventListener('click', function() {
+            const audioEl = document.getElementById('processedAudio');
+            const btn = this;
+            
+            if (!liveWaveformActive && audioEl.src) {
+                startLiveWaveform(audioEl);
+                btn.textContent = 'Stop Live View';
+                liveWaveformActive = true;
+            } else {
+                stopLiveWaveform();
+                btn.textContent = 'Start Live View';
+                liveWaveformActive = false;
+            }
+        });
+
+        function startLiveWaveform(audioElement) {
+            if (!audioContextLive) {
+                audioContextLive = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            
+            analyser = audioContextLive.createAnalyser();
+            analyser.fftSize = 2048;
+            
+            if (!liveSource) {
+                liveSource = audioContextLive.createMediaElementSource(audioElement);
+                liveSource.connect(analyser);
+                analyser.connect(audioContextLive.destination);
+            }
+            
+            drawLiveWaveform();
+        }
+
+        function drawLiveWaveform() {
+            const canvas = document.getElementById('liveWaveformCanvas');
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width = canvas.offsetWidth;
+            const height = canvas.height = canvas.offsetHeight;
+            
+            const bufferLength = analyser.fftSize;
+            const dataArray = new Uint8Array(bufferLength);
+            
+            function draw() {
+                if (!liveWaveformActive) return;
+                
+                animationId = requestAnimationFrame(draw);
+                
+                analyser.getByteTimeDomainData(dataArray);
+                
+                ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--bg-tertiary').trim();
+                ctx.fillRect(0, 0, width, height);
+                
+                ctx.lineWidth = 2;
+                ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--accent-color').trim();
+                ctx.beginPath();
+                
+                const sliceWidth = width / bufferLength;
+                let x = 0;
+                
+                for (let i = 0; i < bufferLength; i++) {
+                    const v = dataArray[i] / 128.0;
+                    const y = v * height / 2;
+                    
+                    if (i === 0) {
+                        ctx.moveTo(x, y);
+                    } else {
+                        ctx.lineTo(x, y);
+                    }
+                    
+                    x += sliceWidth;
+                }
+                
+                ctx.lineTo(width, height / 2);
+                ctx.stroke();
+            }
+            
+            draw();
+        }
+
+        function stopLiveWaveform() {
+            if (animationId) {
+                cancelAnimationFrame(animationId);
+                animationId = null;
+            }
+            
+            const canvas = document.getElementById('liveWaveformCanvas');
+            if (canvas) {
+                const ctx = canvas.getContext('2d');
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+            }
+        }
+
+        document.getElementById('processedAudio').addEventListener('play', function() {
+            if (!liveWaveformActive) {
+                document.getElementById('toggleLiveWave').click();
+            }
+        });
+
+        document.getElementById('processedAudio').addEventListener('pause', function() {
+            if (liveWaveformActive) {
+                document.getElementById('toggleLiveWave').click();
+            }
+        });
+
+        // Get all sliders - FIXED: Added missing sliders
         const sliders = {
             master: document.getElementById('masterGain'),
             bass: document.getElementById('bassBoost'),
@@ -758,10 +1036,17 @@
             stereoWidth: document.getElementById('stereoWidth'),
             bitDepth: document.getElementById('bitDepth'),
             startTime: document.getElementById('startTime'),
-            endTime: document.getElementById('endTime')
+            endTime: document.getElementById('endTime'),
+            fadeIn: document.getElementById('fadeIn'),
+            fadeOut: document.getElementById('fadeOut'),
+            subBass: document.getElementById('subBassBoost'),
+            presence: document.getElementById('presenceBoost'),
+            air: document.getElementById('airBoost'),
+            noiseGate: document.getElementById('noiseGate'),
+            limiter: document.getElementById('limiterThreshold')
         };
 
-        // Get all value displays
+        // Get all value displays - FIXED: Added missing displays
         const displays = {
             master: document.getElementById('masterValue'),
             bass: document.getElementById('bassValue'),
@@ -778,7 +1063,14 @@
             stereoWidth: document.getElementById('stereoWidthValue'),
             bitDepth: document.getElementById('bitDepthValue'),
             startTime: document.getElementById('startTimeValue'),
-            endTime: document.getElementById('endTimeValue')
+            endTime: document.getElementById('endTimeValue'),
+            fadeIn: document.getElementById('fadeInValue'),
+            fadeOut: document.getElementById('fadeOutValue'),
+            subBass: document.getElementById('subBassValue'),
+            presence: document.getElementById('presenceValue'),
+            air: document.getElementById('airValue'),
+            noiseGate: document.getElementById('noiseGateValue'),
+            limiter: document.getElementById('limiterValue')
         };
 
         // Update all displays
@@ -798,16 +1090,33 @@
             displays.delayFeedback.textContent = sliders.delayFeedback.value + '%';
             displays.stereoWidth.textContent = sliders.stereoWidth.value + '%';
             displays.bitDepth.textContent = sliders.bitDepth.value + ' bit';
-
-            if (currentFile && currentFile.duration) {
-                const startSec = (parseFloat(sliders.startTime.value) / 10) * currentFile.duration;
-                const endSec = (parseFloat(sliders.endTime.value) / 10) * currentFile.duration;
-                displays.startTime.textContent = startSec.toFixed(1) + 's';
-                displays.endTime.textContent = endSec === currentFile.duration ? 'End' : endSec.toFixed(1) + 's';
-            } else {
-                displays.startTime.textContent = '0.0s';
-                displays.endTime.textContent = 'End';
-            }
+            displays.fadeIn.textContent = parseFloat(sliders.fadeIn.value).toFixed(1) + 's';
+            displays.fadeOut.textContent = parseFloat(sliders.fadeOut.value).toFixed(1) + 's';
+            displays.subBass.textContent = '+' + sliders.subBass.value + ' dB';
+            displays.presence.textContent = '+' + sliders.presence.value + ' dB';
+            displays.air.textContent = '+' + sliders.air.value + ' dB';
+            const gateVal = parseInt(sliders.noiseGate.value);
+            displays.noiseGate.textContent = gateVal === -80 ? '-80 dB (Off)' : gateVal + ' dB';
+            displays.limiter.textContent = parseFloat(sliders.limiter.value).toFixed(1) + ' dB';
+            
+            // In updateAllDisplays() function, replace the end time section with:
+if (currentFile && currentFile.duration) {
+    const startSec = (parseFloat(sliders.startTime.value) / 100) * currentFile.duration;
+    const endPercent = parseFloat(sliders.endTime.value);
+    
+    displays.startTime.textContent = startSec.toFixed(1) + 's';
+    
+    // If slider is at 100%, show "End" and use full duration
+    if (endPercent >= 99.9) {
+        displays.endTime.textContent = 'End';
+    } else {
+        const endSec = (endPercent / 100) * currentFile.duration;
+        displays.endTime.textContent = endSec.toFixed(1) + 's';
+    }
+} else {
+    displays.startTime.textContent = '0.0s';
+    displays.endTime.textContent = 'End';
+}
         }
 
         // Setup slider listeners
@@ -824,30 +1133,35 @@
 
         // Presets
         const presets = {
-            none: {
-                master: 1, bass: 0, lowMid: 0, highMid: 0, treble: 0,
+            none: { 
+                master: 1, bass: 0, lowMid: 0, highMid: 0, treble: 0, 
                 distortion: 0, compression: 1, pitch: 0, speed: 1.0,
-                reverb: 0, delayTime: 0, delayFeedback: 0, stereoWidth: 100, bitDepth: 16
+                reverb: 0, delayTime: 0, delayFeedback: 0, stereoWidth: 100, bitDepth: 16,
+                fadeIn: 0, fadeOut: 0, subBass: 0, presence: 0, air: 0, noiseGate: -80, limiter: -0.1
             },
-            mild: {
-                master: 30, bass: 10, lowMid: 15, highMid: 10, treble: 10,
+            mild: { 
+                master: 30, bass: 10, lowMid: 15, highMid: 10, treble: 10, 
                 distortion: 200, compression: 8, pitch: 0, speed: 1.0,
-                reverb: 0, delayTime: 0, delayFeedback: 0, stereoWidth: 100, bitDepth: 16
+                reverb: 10, delayTime: 0, delayFeedback: 0, stereoWidth: 100, bitDepth: 16,
+                fadeIn: 0, fadeOut: 0, subBass: 5, presence: 5, air: 5, noiseGate: -80, limiter: -0.1
             },
-            default: {
-                master: 100, bass: 30, lowMid: 35, highMid: 30, treble: 25,
+            default: { 
+                master: 100, bass: 30, lowMid: 35, highMid: 30, treble: 25, 
                 distortion: 800, compression: 20, pitch: 0, speed: 1.0,
-                reverb: 0, delayTime: 0, delayFeedback: 0, stereoWidth: 100, bitDepth: 16
+                reverb: 20, delayTime: 0.3, delayFeedback: 30, stereoWidth: 100, bitDepth: 16,
+                fadeIn: 0, fadeOut: 0, subBass: 15, presence: 10, air: 10, noiseGate: -80, limiter: -0.1
             },
-            extreme: {
-                master: 150, bass: 40, lowMid: 45, highMid: 40, treble: 35,
+            extreme: { 
+                master: 150, bass: 40, lowMid: 45, highMid: 40, treble: 35, 
                 distortion: 1200, compression: 20, pitch: 0, speed: 1.0,
-                reverb: 0, delayTime: 0, delayFeedback: 0, stereoWidth: 150, bitDepth: 12
+                reverb: 40, delayTime: 0.5, delayFeedback: 50, stereoWidth: 150, bitDepth: 12,
+                fadeIn: 0, fadeOut: 0, subBass: 25, presence: 20, air: 15, noiseGate: -60, limiter: -0.1
             },
-            nuclear: {
-                master: 200, bass: 50, lowMid: 50, highMid: 50, treble: 50,
+            nuclear: { 
+                master: 200, bass: 50, lowMid: 50, highMid: 50, treble: 50, 
                 distortion: 2000, compression: 20, pitch: 0, speed: 1.0,
-                reverb: 0, delayTime: 0, delayFeedback: 0, stereoWidth: 200, bitDepth: 8
+                reverb: 60, delayTime: 1.0, delayFeedback: 70, stereoWidth: 200, bitDepth: 8,
+                fadeIn: 0, fadeOut: 0, subBass: 40, presence: 30, air: 25, noiseGate: -40, limiter: -0.1
             }
         };
 
@@ -889,7 +1203,16 @@
                 stereoWidth: parseInt(sliders.stereoWidth.value),
                 bitDepth: parseInt(sliders.bitDepth.value),
                 startTime: parseFloat(sliders.startTime.value),
-                endTime: parseFloat(sliders.endTime.value)
+                endTime: parseFloat(sliders.endTime.value),
+                fadeIn: parseFloat(sliders.fadeIn.value),
+                fadeOut: parseFloat(sliders.fadeOut.value),
+                subBass: parseInt(sliders.subBass.value),
+                presence: parseInt(sliders.presence.value),
+                air: parseInt(sliders.air.value),
+                noiseGate: parseInt(sliders.noiseGate.value),
+                limiter: parseFloat(sliders.limiter.value),
+                channelMode: document.getElementById('channelMode').value,
+                autoNormalize: document.getElementById('autoNormalize').checked
             };
         }
 
@@ -1025,7 +1348,7 @@
             `).join('');
         }
 
-        window.loadCustomPreset = function (index) {
+        window.loadCustomPreset = function(index) {
             const preset = customPresets[index];
             if (!preset) return;
 
@@ -1044,7 +1367,7 @@
             document.getElementById('status').textContent = `Loaded custom preset: ${preset.name}`;
         };
 
-        window.deleteCustomPreset = function (index) {
+        window.deleteCustomPreset = function(index) {
             customPresets.splice(index, 1);
             saveCustomPresets();
             renderCustomPresets();
@@ -1152,7 +1475,7 @@
             audioEl.src = audioUrl;
 
             compareBtn.textContent = isComparingOriginal ? 'Switch to Processed' : 'Switch to Original';
-            document.getElementById('status').textContent = isComparingOriginal ?
+            document.getElementById('status').textContent = isComparingOriginal ? 
                 'Playing original audio' : 'Playing processed audio';
         });
 
@@ -1217,7 +1540,7 @@
             const samples = 44100;
             const curve = new Float32Array(samples);
             const step = Math.pow(2, bits);
-
+            
             for (let i = 0; i < samples; i++) {
                 const x = (i * 2 / samples) - 1;
                 curve[i] = Math.round(x * step) / step;
@@ -1228,7 +1551,7 @@
         function createReverbImpulse(context, decay) {
             const length = context.sampleRate * 2;
             const impulse = context.createBuffer(2, length, context.sampleRate);
-
+            
             for (let channel = 0; channel < 2; channel++) {
                 const channelData = impulse.getChannelData(channel);
                 for (let i = 0; i < length; i++) {
@@ -1251,6 +1574,22 @@
         }
 
         function normalizeBuffer(buffer) {
+            const autoNorm = document.getElementById('autoNormalize').checked;
+            const limiterThreshold = parseFloat(document.getElementById('limiterThreshold').value);
+            const limiterLinear = Math.pow(10, limiterThreshold / 20);
+            
+            if (!autoNorm) {
+                for (let channel = 0; channel < buffer.numberOfChannels; channel++) {
+                    const data = buffer.getChannelData(channel);
+                    for (let i = 0; i < data.length; i++) {
+                        if (Math.abs(data[i]) > limiterLinear) {
+                            data[i] = Math.sign(data[i]) * limiterLinear;
+                        }
+                    }
+                }
+                return;
+            }
+            
             let max = 0;
             for (let channel = 0; channel < buffer.numberOfChannels; channel++) {
                 const data = buffer.getChannelData(channel);
@@ -1261,7 +1600,7 @@
             }
 
             if (max > 0) {
-                const scale = 0.99 / max;
+                const scale = limiterLinear / max;
                 for (let channel = 0; channel < buffer.numberOfChannels; channel++) {
                     const data = buffer.getChannelData(channel);
                     for (let i = 0; i < data.length; i++) {
@@ -1374,32 +1713,113 @@
 
                 const settings = getCurrentSettings();
 
-                currentFile.duration = audioBuffer.duration;
-                sliders.startTime.disabled = false;
-                sliders.endTime.disabled = false;
-                sliders.startTime.max = audioBuffer.duration;
-                sliders.endTime.max = audioBuffer.duration;
+                // In processAudio() function, update the max value setting:
+currentFile.duration = audioBuffer.duration;
+sliders.startTime.disabled = false;
+sliders.endTime.disabled = false;
+sliders.startTime.max = 100;  // Keep as percentage
+sliders.endTime.max = 100;    // Keep as percentage
 
                 // Apply trimming
-                const startSample = Math.floor((settings.startTime / 10) * audioBuffer.length);
-                const endSample = Math.floor((settings.endTime / 10) * audioBuffer.length);
+                // In processAudio() function, replace the trimming section with:
+// Apply trimming
+const startSample = Math.floor((settings.startTime / 100) * audioBuffer.length);
+const endPercent = settings.endTime;
 
-                if (startSample > 0 || endSample < audioBuffer.length) {
-                    const trimmedLength = endSample - startSample;
-                    const trimmedBuffer = audioContext.createBuffer(
-                        audioBuffer.numberOfChannels,
-                        trimmedLength,
-                        audioBuffer.sampleRate
-                    );
+// If end time is at or near 100%, use full length
+let endSample;
+if (endPercent >= 99.9) {
+    endSample = audioBuffer.length;
+} else {
+    endSample = Math.floor((endPercent / 100) * audioBuffer.length);
+}
 
+if (startSample > 0 || endSample < audioBuffer.length) {
+    const trimmedLength = endSample - startSample;
+    const trimmedBuffer = audioContext.createBuffer(
+        audioBuffer.numberOfChannels,
+        trimmedLength,
+        audioBuffer.sampleRate
+    );
+    
+    for (let channel = 0; channel < audioBuffer.numberOfChannels; channel++) {
+        const originalData = audioBuffer.getChannelData(channel);
+        const trimmedData = trimmedBuffer.getChannelData(channel);
+        for (let i = 0; i < trimmedLength; i++) {
+            trimmedData[i] = originalData[startSample + i];
+        }
+    }
+    audioBuffer = trimmedBuffer;
+}
+
+                // Apply Fade In
+                if (settings.fadeIn > 0) {
+                    const fadeInSamples = Math.floor(settings.fadeIn * audioBuffer.sampleRate);
                     for (let channel = 0; channel < audioBuffer.numberOfChannels; channel++) {
-                        const originalData = audioBuffer.getChannelData(channel);
-                        const trimmedData = trimmedBuffer.getChannelData(channel);
-                        for (let i = 0; i < trimmedLength; i++) {
-                            trimmedData[i] = originalData[startSample + i];
+                        const data = audioBuffer.getChannelData(channel);
+                        for (let i = 0; i < Math.min(fadeInSamples, data.length); i++) {
+                            data[i] *= (i / fadeInSamples);
                         }
                     }
-                    audioBuffer = trimmedBuffer;
+                }
+
+                // Apply Fade Out
+                if (settings.fadeOut > 0) {
+                    const fadeOutSamples = Math.floor(settings.fadeOut * audioBuffer.sampleRate);
+                    const startSampleFade = audioBuffer.length - fadeOutSamples;
+                    for (let channel = 0; channel < audioBuffer.numberOfChannels; channel++) {
+                        const data = audioBuffer.getChannelData(channel);
+                        for (let i = Math.max(0, startSampleFade); i < data.length; i++) {
+                            data[i] *= (1 - (i - startSampleFade) / fadeOutSamples);
+                        }
+                    }
+                }
+
+                // Apply Noise Gate
+                if (settings.noiseGate > -80) {
+                    const threshold = Math.pow(10, settings.noiseGate / 20);
+                    for (let channel = 0; channel < audioBuffer.numberOfChannels; channel++) {
+                        const data = audioBuffer.getChannelData(channel);
+                        for (let i = 0; i < data.length; i++) {
+                            if (Math.abs(data[i]) < threshold) {
+                                data[i] = 0;
+                            }
+                        }
+                    }
+                }
+
+                // Apply Channel Mode
+                const channelMode = settings.channelMode || 'stereo';
+                if (audioBuffer.numberOfChannels === 2 && channelMode !== 'stereo') {
+                    const left = audioBuffer.getChannelData(0);
+                    const right = audioBuffer.getChannelData(1);
+                    
+                    switch (channelMode) {
+                        case 'mono':
+                            for (let i = 0; i < left.length; i++) {
+                                const mono = (left[i] + right[i]) / 2;
+                                left[i] = mono;
+                                right[i] = mono;
+                            }
+                            break;
+                        case 'left':
+                            for (let i = 0; i < right.length; i++) {
+                                right[i] = left[i];
+                            }
+                            break;
+                        case 'right':
+                            for (let i = 0; i < left.length; i++) {
+                                left[i] = right[i];
+                            }
+                            break;
+                        case 'swap':
+                            for (let i = 0; i < left.length; i++) {
+                                const temp = left[i];
+                                left[i] = right[i];
+                                right[i] = temp;
+                            }
+                            break;
+                    }
                 }
 
                 const pitchShiftRate = Math.pow(2, settings.pitch / 12);
@@ -1423,7 +1843,15 @@
                 lastNode.connect(preGain);
                 lastNode = preGain;
 
-                // EQ Filters
+                // Sub-Bass Filter
+                const subBassFilter = offlineContext.createBiquadFilter();
+                subBassFilter.type = 'lowshelf';
+                subBassFilter.frequency.value = 60;
+                subBassFilter.gain.value = settings.subBass;
+                lastNode.connect(subBassFilter);
+                lastNode = subBassFilter;
+
+                // Bass Filter
                 const bassFilter = offlineContext.createBiquadFilter();
                 bassFilter.type = 'lowshelf';
                 bassFilter.frequency.value = 200;
@@ -1431,13 +1859,7 @@
                 lastNode.connect(bassFilter);
                 lastNode = bassFilter;
 
-                const trebleFilter = offlineContext.createBiquadFilter();
-                trebleFilter.type = 'highshelf';
-                trebleFilter.frequency.value = 3000;
-                trebleFilter.gain.value = settings.treble;
-                lastNode.connect(trebleFilter);
-                lastNode = trebleFilter;
-
+                // Low-Mid Filter
                 const lowMidFilter = offlineContext.createBiquadFilter();
                 lowMidFilter.type = 'peaking';
                 lowMidFilter.frequency.value = 800;
@@ -1446,6 +1868,7 @@
                 lastNode.connect(lowMidFilter);
                 lastNode = lowMidFilter;
 
+                // High-Mid Filter
                 const highMidFilter = offlineContext.createBiquadFilter();
                 highMidFilter.type = 'peaking';
                 highMidFilter.frequency.value = 2000;
@@ -1453,6 +1876,31 @@
                 highMidFilter.Q.value = 0.7;
                 lastNode.connect(highMidFilter);
                 lastNode = highMidFilter;
+
+                // Treble Filter
+                const trebleFilter = offlineContext.createBiquadFilter();
+                trebleFilter.type = 'highshelf';
+                trebleFilter.frequency.value = 3000;
+                trebleFilter.gain.value = settings.treble;
+                lastNode.connect(trebleFilter);
+                lastNode = trebleFilter;
+
+                // Presence Filter
+                const presenceFilter = offlineContext.createBiquadFilter();
+                presenceFilter.type = 'peaking';
+                presenceFilter.frequency.value = 5000;
+                presenceFilter.gain.value = settings.presence;
+                presenceFilter.Q.value = 0.7;
+                lastNode.connect(presenceFilter);
+                lastNode = presenceFilter;
+
+                // Air Filter
+                const airFilter = offlineContext.createBiquadFilter();
+                airFilter.type = 'highshelf';
+                airFilter.frequency.value = 12000;
+                airFilter.gain.value = settings.air;
+                lastNode.connect(airFilter);
+                lastNode = airFilter;
 
                 // Distortion
                 if (settings.distortion > 0) {
@@ -1481,22 +1929,22 @@
                 if (settings.delayTime > 0 && settings.delayFeedback > 0) {
                     const delay = offlineContext.createDelay(5.0);
                     delay.delayTime.value = settings.delayTime;
-
+                    
                     const delayFeedback = offlineContext.createGain();
                     delayFeedback.gain.value = settings.delayFeedback / 100;
-
+                    
                     const delayMix = offlineContext.createGain();
                     delayMix.gain.value = 0.5;
-
+                    
                     lastNode.connect(delay);
                     delay.connect(delayFeedback);
                     delayFeedback.connect(delay);
                     delay.connect(delayMix);
-
+                    
                     const dryGain = offlineContext.createGain();
                     dryGain.gain.value = 0.5;
                     lastNode.connect(dryGain);
-
+                    
                     const delayMerge = offlineContext.createGain();
                     dryGain.connect(delayMerge);
                     delayMix.connect(delayMerge);
@@ -1507,17 +1955,17 @@
                 if (settings.reverb > 0) {
                     const convolver = offlineContext.createConvolver();
                     convolver.buffer = createReverbImpulse(offlineContext, settings.reverb / 100);
-
+                    
                     const reverbMix = offlineContext.createGain();
                     reverbMix.gain.value = settings.reverb / 100;
-
+                    
                     const dryGain = offlineContext.createGain();
                     dryGain.gain.value = 1 - (settings.reverb / 200);
-
+                    
                     lastNode.connect(convolver);
                     convolver.connect(reverbMix);
                     lastNode.connect(dryGain);
-
+                    
                     const reverbMerge = offlineContext.createGain();
                     dryGain.connect(reverbMerge);
                     reverbMix.connect(reverbMerge);
@@ -1528,10 +1976,10 @@
                 if (audioBuffer.numberOfChannels === 2 && settings.stereoWidth !== 100) {
                     const splitter = offlineContext.createChannelSplitter(2);
                     const merger = offlineContext.createChannelMerger(2);
-
+                    
                     const widthGain = offlineContext.createGain();
                     widthGain.gain.value = settings.stereoWidth / 100;
-
+                    
                     lastNode.connect(splitter);
                     splitter.connect(widthGain, 0);
                     splitter.connect(widthGain, 1);
@@ -1624,7 +2072,7 @@
             if (files.length === 1) {
                 currentFile = files[0];
                 fileQueue = [];
-
+                
                 const fileNameEl = document.getElementById('fileNameDisplay');
                 if (fileNameEl) {
                     fileNameEl.textContent = currentFile.name;
@@ -1636,7 +2084,7 @@
                 fileQueue = Array.from(files);
                 displayFileList(files);
                 statusEl.textContent = `${files.length} files ready for batch processing.`;
-
+                
                 if (confirm(`Process ${files.length} files in batch mode? Each file will be processed and auto-downloaded.`)) {
                     processBatchFiles();
                 }
